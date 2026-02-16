@@ -1,0 +1,73 @@
+# ==============================
+# Android / Gradle
+# ==============================
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+
+# ==============================
+# Keystore Files (IMPORTANT 🔐)
+# ==============================
+*.jks
+*.keystore
+
+# ==============================
+# Logs
+# ==============================
+*.log
+
+# ==============================
+# Android Studio
+# ==============================
+.idea/
+*.iws
+out/
+
+# ==============================
+# Kotlin
+# ==============================
+*.class
+
+# ==============================
+# Generated Files
+# ==============================
+bin/
+gen/
+
+# ==============================
+# MacOS
+# ==============================
+.DS_Store
+
+# ==============================
+# Environment Files
+# ==============================
+.env
+.env.*
+
+# ==============================
+# Google Services (if needed)
+# ==============================
+# Uncomment if you don’t want to track it
+# app/google-services.json
+
+# ==============================
+# Firebase Crashlytics
+# ==============================
+com_crashlytics_export_strings.xml
+
+# ==============================
+# NDK
+# ==============================
+obj/
