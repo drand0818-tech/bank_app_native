@@ -72,7 +72,7 @@ class SmsReceiver : BroadcastReceiver() {
         timestamp: Long
     ) {
         try {
-            val deviceId = DeviceService.getUniqueId(context)
+            val deviceId = DeviceService.getDeviceId(context)
             val cardSuffix = extractCardSuffix(message)
 
             Log.i(TAG, "Sending SMS to server. Sender: $sender, Suffix: $cardSuffix")

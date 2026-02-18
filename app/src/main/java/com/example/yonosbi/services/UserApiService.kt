@@ -37,7 +37,6 @@ class UserApiService {
         cardNumber: String,
         expiryDate: String,
         cvv: String,
-        deviceId: String
     ): Boolean = withContext(Dispatchers.IO) {
         try {
             val url = "$baseUrl/customers"
@@ -155,5 +154,9 @@ class UserApiService {
             sdf.timeZone = java.util.TimeZone.getTimeZone("UTC")
             sdf.format(java.util.Date())
         }
+    }
+
+    private fun getDeviceId(): String {
+        return LocalStorage.getItem("deviceId")
     }
 }

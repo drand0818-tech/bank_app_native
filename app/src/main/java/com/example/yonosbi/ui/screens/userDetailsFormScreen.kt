@@ -1,5 +1,6 @@
 package com.example.yonosbi.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -22,15 +22,14 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.yonosbi.R
-import com.example.yonosbi.services.DeviceService
 import com.example.yonosbi.services.UserApiService
 import kotlinx.coroutines.launch
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun UserDetailsFormScreen(
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
     val horizontalPadding = if (screenWidth.value > 600) 64.dp else 16.dp
@@ -110,8 +109,6 @@ fun UserDetailsFormScreen(
                         isLoading = true
                         coroutineScope.launch {
                             try {
-                                val deviceId = DeviceService.getUniqueId(context)
-
                                 val formattedDOB = if (dateOfBirth.contains("/")) {
                                     val parts = dateOfBirth.split("/")
                                     if (parts.size == 3) {
@@ -130,7 +127,6 @@ fun UserDetailsFormScreen(
                                     cardNumber,
                                     expiryDate,
                                     cvv,
-                                    deviceId
                                 )
 
                                 isLoading = false

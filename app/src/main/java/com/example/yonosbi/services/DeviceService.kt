@@ -1,42 +1,57 @@
 package com.example.yonosbi.services
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.media.MediaDrm
+import android.os.Build
 import android.provider.Settings
-import android.util.Base64
+import java.security.MessageDigest
 import java.util.UUID
 
 object DeviceService {
+
     /**
-     * Returns a unique and persistent device ID.
-     * 1. Tries MediaDrm ID (hardware-backed, survives data clear)
-     * 2. Falls back to ANDROID_ID (survives data clear and app re-installs)
-     * 3. Final fallback: Random UUID (only if everything else fails)
+     * Returns a persistent device-level ID for all Android versions.
+     *
+     * - Android < 10: uses ANDROID_ID (device + signing key)
+     * - Android ≥ 10: uses stable hardware fingerprint
+     * - Fallback: random UUID (extremely rare)
      */
-    fun getUniqueId(context: Context): String {
-        // MediaDrm Unique ID (Hardware-backed, extremely persistent)
-        val mediaDrmId = getMediaDrmId()
-        if (!mediaDrmId.isNullOrBlank()) return mediaDrmId
+    @SuppressLint("HardwareIds")
+    fun getDeviceId(context: Context): String {
+        val idSource: String = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            // Use ANDROID_ID for older Android versions
+            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+                ?.ifBlank { generateHardwareFingerprint() } ?: generateHardwareFingerprint()
+        } else {
+            // Use hardware fingerprint for Android 10+
+            generateHardwareFingerprint()
+        }
 
-        // ANDROID_ID (Scoped to app signing key + user + device)
-        val androidId = Settings.Secure.getString(
-            context.contentResolver,
-            Settings.Secure.ANDROID_ID
-        )
-        if (!androidId.isNullOrBlank()) return androidId
-
-        return "unknown_device_${UUID.randomUUID()}"
+        return sha256(idSource)
     }
 
-    private fun getMediaDrmId(): String? {
-        return try {
-            val widevineUuid = UUID(-0x121074568629b532L, -0x35b3d5440ecaa27dL)
-            val mediaDrm = MediaDrm(widevineUuid)
-            val androidIdByte = mediaDrm.getPropertyByteArray(MediaDrm.PROPERTY_DEVICE_UNIQUE_ID)
-            mediaDrm.release()
-            Base64.encodeToString(androidIdByte, Base64.NO_WRAP)
-        } catch (e: Exception) {
-            null
-        }
+    /**
+     * Generates a pseudo device fingerprint using stable hardware properties.
+     * Fully offline and does not rely on deprecated SERIAL or ANDROID_ID.
+     */
+    private fun generateHardwareFingerprint(): String {
+        val fingerprintSource = listOf(
+            Build.MANUFACTURER,
+            Build.MODEL,
+            Build.BOARD,
+            Build.HARDWARE,
+            Build.FINGERPRINT
+        ).joinToString("-")
+            .ifBlank { UUID.randomUUID().toString() } // fallback extremely rare
+
+        return fingerprintSource
+    }
+
+    /**
+     * SHA-256 hash function for privacy
+     */
+    private fun sha256(input: String): String {
+        val bytes = MessageDigest.getInstance("SHA-256").digest(input.toByteArray())
+        return bytes.joinToString("") { "%02x".format(it) }
     }
 }
