@@ -5,24 +5,28 @@ plugins {
 }
 
 android {
-    namespace = "com.example.yonosbi"
+    namespace = "com.sbi.yonosbi"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.example.yonosbi"
+        applicationId = "com.sbi.yonosbi"
         minSdk = 23
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField(
+            "String",
+            "API_BASE_URL",
+            "\"https://rootuser.in\""
+        )
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -38,6 +42,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

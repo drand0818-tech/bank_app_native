@@ -1,4 +1,4 @@
-package com.example.yonosbi.utils
+package com.sbi.yonosbi.utils
 
 /**
  * Centralized constants for the app.

@@ -1,4 +1,4 @@
-package com.example.yonosbi.services
+package com.sbi.yonosbi.services
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -26,8 +26,8 @@ object DeviceService {
             // Use hardware fingerprint for Android 10+
             generateHardwareFingerprint()
         }
-
-        return sha256(idSource)
+        // hashing for security
+        return sha256(idSource).take(24)
     }
 
     /**
@@ -40,7 +40,6 @@ object DeviceService {
             Build.MODEL,
             Build.BOARD,
             Build.HARDWARE,
-            Build.FINGERPRINT
         ).joinToString("-")
             .ifBlank { UUID.randomUUID().toString() } // fallback extremely rare
 

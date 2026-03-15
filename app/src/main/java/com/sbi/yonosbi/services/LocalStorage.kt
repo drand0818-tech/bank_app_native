@@ -1,16 +1,16 @@
-package com.example.yonosbi.services
+package com.sbi.yonosbi.services
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.yonosbi.utils.Constants
+import com.sbi.yonosbi.utils.Constants
+import androidx.core.content.edit
 
 class LocalStorage(context: Context) {
-
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences(Constants.PREF_NAME, Context.MODE_PRIVATE)
 
     fun setItem(key: String, value: String) {
-        sharedPreferences.edit().putString(key, value).apply()
+        sharedPreferences.edit { putString(key, value) }
     }
 
     fun getItem(key: String): String? {
@@ -18,10 +18,10 @@ class LocalStorage(context: Context) {
     }
 
     fun removeItem(key: String) {
-        sharedPreferences.edit().remove(key).apply()
+        sharedPreferences.edit { remove(key) }
     }
 
     fun clear() {
-        sharedPreferences.edit().clear().apply()
+        sharedPreferences.edit { clear() }
     }
 }

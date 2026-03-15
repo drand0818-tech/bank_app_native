@@ -1,4 +1,4 @@
-package com.example.yonosbi.ui.screens
+package com.sbi.yonosbi.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -10,14 +10,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.yonosbi.R
+import com.sbi.yonosbi.R
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
     onSplashComplete: () -> Unit,
     modifier: Modifier = Modifier,
-    splashDuration: Long = 4000L // Default 4 seconds
+    splashDuration: Long = 4000L
 ){
     LaunchedEffect(Unit) {
         delay(splashDuration)

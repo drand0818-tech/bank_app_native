@@ -1,9 +1,10 @@
-package com.example.yonosbi.ui.screens
+package com.sbi.yonosbi.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -15,16 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.yonosbi.R
+import com.sbi.yonosbi.R
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 // -------------------- DATA MODELS --------------------
 
@@ -64,7 +62,7 @@ fun HomeScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        containerColor = Color(0xFF1166DD) // 🔵 Blue background
+        containerColor = Color(0xFF1166DD)
     ) { innerPadding ->
 
         Column(
@@ -73,37 +71,37 @@ fun HomeScreen(
                 .padding(innerPadding)
         ) {
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            // ⚪ White Content Container
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
                         color = Color.White,
                         shape = RoundedCornerShape(
-                            topStart = 24.dp,
-                            topEnd = 24.dp
+                            topStart = 28.dp,
+                            topEnd = 28.dp
                         )
                     )
             ) {
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-                // 🔹 Carousel
                 ImageCarouselWithDots(
                     images = carouselImages,
                     autoScrollInterval = 3000L
                 )
 
-                // 🔹 List
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp)
+                    contentPadding = PaddingValues(
+                        horizontal = 20.dp,
+                        vertical = 8.dp
+                    )
                 ) {
-                    items(creditCardItems.size) { index ->
+                    items(creditCardItems) { item ->
                         CreditCardListItem(
-                            item = creditCardItems[index],
+                            item = item,
                             navController = navController
                         )
                     }
@@ -118,21 +116,16 @@ fun HomeScreen(
 @Composable
 fun ImageCarouselWithDots(
     images: List<CarouselImage>,
-    autoScrollInterval: Long = 3000L,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    autoScrollInterval: Long = 3000L
 ) {
-    val pagerState = rememberPagerState(
-        pageCount = { images.size }
-    )
-    val coroutineScope = rememberCoroutineScope()
+    val pagerState = rememberPagerState(pageCount = { images.size })
 
-    LaunchedEffect(pagerState.currentPage) {
+    LaunchedEffect(Unit) {
         while (true) {
             delay(autoScrollInterval)
             val nextPage = (pagerState.currentPage + 1) % images.size
-            coroutineScope.launch {
-                pagerState.animateScrollToPage(nextPage)
-            }
+            pagerState.animateScrollToPage(nextPage)
         }
     }
 
@@ -144,20 +137,18 @@ fun ImageCarouselWithDots(
             state = pagerState,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp),
-            contentPadding = PaddingValues(horizontal = 8.dp)
+                .aspectRatio(2.2f),
+            contentPadding = PaddingValues(horizontal = 12.dp)
         ) { page ->
             Image(
                 painter = painterResource(id = images[page].imageRes),
                 contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
+                modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -191,26 +182,20 @@ fun CreditCardListItem(
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
-    val cardHeight = screenWidth * 0.52f
-    val buttonHeight = screenWidth * 0.12f
-    val buttonWidth = screenWidth * 0.4f
-    val buttonRadius = buttonHeight / 2
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp),
+            .padding(vertical = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(cardHeight),
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(4.dp)
+                .aspectRatio(1.8f),
+            shape = RoundedCornerShape(20.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.card_image),
@@ -220,31 +205,32 @@ fun CreditCardListItem(
             )
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = item.title,
             textAlign = TextAlign.Center,
-            fontSize = (screenWidth.value * 0.05f).sp,
-            fontWeight = FontWeight.Bold
+            style = MaterialTheme.typography.titleMedium.copy(
+                fontWeight = FontWeight.Bold
+            )
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = { navController.navigate("user_details_form") },
             modifier = Modifier
-                .width(buttonWidth)
-                .height(buttonHeight),
-            shape = RoundedCornerShape(buttonRadius),
+                .fillMaxWidth(0.6f)
+                .height(48.dp),
+            shape = RoundedCornerShape(50),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF1166DD)
             )
         ) {
             Text(
                 text = "Click Here",
-                color = Color.White,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = Color.White
             )
         }
     }

@@ -1,4 +1,4 @@
-package com.example.yonosbi.ui.theme
+package com.sbi.yonosbi.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
